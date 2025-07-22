@@ -1,0 +1,32 @@
+{
+  "name": "finanza-finance-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.8",
+    "@tanstack/react-query": "^5.0.0",
+    "axios": "^1.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.8.1",
+    "lucide-react": "^0.263.1",
+    "chart.js": "^4.3.0",
+    "react-chartjs-2": "^5.2.0",
+    "date-fns": "^2.30.0",
+    "viem": "^2.0.0",
+    "wagmi": "^2.15.6",
+    "x402-axios": "^0.4.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@vitejs/plugin-react": "^4.2.1",
+    "vite": "^5.4.1"
+  }
+}
