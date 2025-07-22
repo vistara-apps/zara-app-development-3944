@@ -1,142 +1,32 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Home, CreditCard, PieChart, TrendingUp, Target, Menu, X } from 'lucide-react';
+import React from 'react'
+import { useAuth } from '../contexts/AuthContext'
+import { LogOut, User } from 'lucide-react'
 
-function Header({ user, onLogin, onLogout }) {
-  const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
-
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Transactions', href: '/transactions', icon: CreditCard },
-    { name: 'Budgets', href: '/budgets', icon: PieChart },
-    { name: 'Investments', href: '/investments', icon: TrendingUp },
-    { name: 'Goals', href: '/goals', icon: Target },
-  ];
+function Header() {
+  const { user, logout } = useAuth()
 
   return (
-    <header style={{ 
-      background: 'rgba(255, 255, 255, 0.95)', 
-      backdropFilter: 'blur(10px)',
-      borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 50
-    }}>
-      <div className="container">
-        <div className="flex-between" style={{ padding: '15px 0' }}>
-          <div className="flex">
-            <Link to="/" style={{ textDecoration: 'none' }}>
-              <h1 style={{ 
-                fontSize: '1.5em', 
-                fontWeight: 'bold',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}>
-                Finanza
-              </h1>
-            </Link>
+    <header className="bg-white shadow-sm border-b border-gray-200">
+      <div className="flex items-center justify-between px-6 py-4">
+        <h1 className="text-2xl font-bold text-gray-900">Personal Finance Dashboard</h1>
+        
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <User className="h-5 w-5 text-gray-500" />
+            <span className="text-sm text-gray-700">{user?.name}</span>
           </div>
-
-          {user && (
-            <>
-              <nav className="flex" style={{ display: window.innerWidth > 768 ? 'flex' : 'none' }}>
-                {navigation.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = location.pathname === item.href;
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      style={{
-                        textDecoration: 'none',
-                        padding: '8px 16px',
-                        borderRadius: '8px',
-                        background: isActive ? 'rgba(102, 126, 234, 0.1)' : 'transparent',
-                        color: isActive ? '#667eea' : '#333',
-                        transition: 'all 0.3s ease'
-                      }}
-                      className="flex"
-                    >
-                      <Icon size={18} />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </nav>
-
-              <button
-                style={{ 
-                  display: window.innerWidth <= 768 ? 'block' : 'none',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '8px'
-                }}
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </>
-          )}
-
-          <div className="flex">
-            {user && <ConnectButton />}
-            {user ? (
-              <div className="flex">
-                <span style={{ marginRight: '15px', color: '#667eea', fontWeight: '500' }}>
-                  Welcome, {user.name}!
-                </span>
-                <button className="btn btn-secondary" onClick={onLogout}>
-                  Logout
-                </button>
-              </div>
-            ) : (
-              <button className="btn" onClick={onLogin}>
-                Login
-              </button>
-            )}
-          </div>
+          
+          <button
+            onClick={logout}
+            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Logout</span>
+          </button>
         </div>
-
-        {/* Mobile menu */}
-        {user && mobileMenuOpen && (
-          <nav style={{ 
-            display: 'block',
-            borderTop: '1px solid rgba(0, 0, 0, 0.1)',
-            paddingTop: '15px',
-            marginBottom: '15px'
-          }}>
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  style={{
-                    textDecoration: 'none',
-                    padding: '8px 0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    color: isActive ? '#667eea' : '#333',
-                    fontWeight: isActive ? '500' : 'normal'
-                  }}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <Icon size={18} />
-                  <span>{item.name}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        )}
       </div>
     </header>
-  );
+  )
 }
 
-export default Header;
+export default Header

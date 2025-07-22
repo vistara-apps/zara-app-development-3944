@@ -1,90 +1,57 @@
-import React from 'react';
-import { useFinance } from '../context/FinanceContext';
-import { formatDistanceToNow } from 'date-fns';
+import React from 'react'
+import { format } from 'date-fns'
+import { Target } from 'lucide-react'
 
-function GoalsProgress({ limit = 10 }) {
-  const { goals } = useFinance();
-  
-  const displayGoals = goals.slice(0, limit);
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'High': return '#ff6b6b';
-      case 'Medium': return '#fdcb6e';
-      case 'Low': return '#00b894';
-      default: return '#6c757d';
-    }
-  };
-
-  if (displayGoals.length === 0) {
-    return (
-      <div className="text-center text-muted" style={{ padding: '40px 0' }}>
-        <div style={{ fontSize: '2em', marginBottom: '10px' }}>🎯</div>
-        <p>No financial goals set yet. Create your first goal!</p>
-      </div>
-    );
-  }
-
+function GoalsProgress({ goals }) {
   return (
-    <div>
-      {displayGoals.map((goal) => {
-        const percentage = (goal.current_amount / goal.target_amount) * 100;
-        const daysUntilTarget = Math.ceil(
-          (new Date(goal.target_date) - new Date()) / (1000 * 60 * 60 * 24)
-        );
+    <div className="card">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-900">Goal Progress</h3>
+        <Target className="h-5 w-5 text-primary-600" />
+      </div>
+      
+      <div className="space-y-6">
+        {goals.map((goal) => {
+          const percentage = (goal.current / goal.target) * 100
+          const remaining = goal.target - goal.current
+          
+          return (
+            <div key={goal.id} className="space-y-3">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h4 className="font-medium text-gray-900">{goal.name}</h4>
+                  <p className="text-sm text-gray-600">
+                    Target: ${goal.target.toLocaleString()} by {format(new Date(goal.target_date), 'MMM d, yyyy')}
+                  </p>
+                </div>
+                <span className="text-sm font-medium text-primary-600">
+                  {percentage.toFixed(1)}%
+                </span>
+              </div>
+              
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className="bg-primary-600 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(percentage, 100)}%` }}
+                ></div>
+              </div>
+              
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>${goal.current.toLocaleString()} saved</span>
+                <span>${remaining.toLocaleString()} to go</span>
+              </div>
+            </div>
+          )
+        })}
         
-        return (
-          <div key={goal.id} className="category-item" style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-            <div className="flex-between" style={{ width: '100%', marginBottom: '10px' }}>
-              <div>
-                <div style={{ fontWeight: '500' }}>{goal.name}</div>
-                <div className="text-muted" style={{ fontSize: '14px' }}>
-                  ${goal.current_amount.toLocaleString()} / ${goal.target_amount.toLocaleString()}
-                </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ 
-                  background: getPriorityColor(goal.priority),
-                  color: 'white',
-                  padding: '4px 8px',
-                  borderRadius: '4px',
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  {goal.priority}
-                </div>
-                <div className="text-muted" style={{ fontSize: '12px', marginTop: '4px' }}>
-                  {daysUntilTarget > 0 ? `${daysUntilTarget} days left` : 'Overdue'}
-                </div>
-              </div>
-            </div>
-            
-            <div style={{ width: '100%' }}>
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill"
-                  style={{ 
-                    width: `${Math.min(percentage, 100)}%`,
-                    background: percentage >= 100 
-                      ? 'linear-gradient(135deg, #00b894 0%, #00a085 100%)'
-                      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                  }}
-                />
-              </div>
-              <div style={{ 
-                textAlign: 'center', 
-                marginTop: '8px',
-                fontWeight: 'bold',
-                color: percentage >= 100 ? '#00b894' : '#667eea'
-              }}>
-                {percentage.toFixed(1)}% Complete
-              </div>
-            </div>
+        {goals.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            No financial goals set yet. Create your first goal to get started!
           </div>
-        );
-      })}
+        )}
+      </div>
     </div>
-  );
+  )
 }
 
-export default GoalsProgress;
+export default GoalsProgress
