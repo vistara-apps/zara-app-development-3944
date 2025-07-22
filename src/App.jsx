@@ -2,6 +2,8 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { DataProvider } from './contexts/DataContext'
+import { ToastProvider } from './contexts/ToastContext'
+import ErrorBoundary from './components/ErrorBoundary'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
 import Transactions from './pages/Transactions'
@@ -13,21 +15,25 @@ import Register from './pages/Register'
 
 function App() {
   return (
-    <AuthProvider>
-      <DataProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="budgets" element={<Budgets />} />
-            <Route path="investments" element={<Investments />} />
-            <Route path="goals" element={<Goals />} />
-          </Route>
-        </Routes>
-      </DataProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <ToastProvider>
+        <AuthProvider>
+          <DataProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/" element={<Layout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="transactions" element={<Transactions />} />
+                <Route path="budgets" element={<Budgets />} />
+                <Route path="investments" element={<Investments />} />
+                <Route path="goals" element={<Goals />} />
+              </Route>
+            </Routes>
+          </DataProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </ErrorBoundary>
   )
 }
 

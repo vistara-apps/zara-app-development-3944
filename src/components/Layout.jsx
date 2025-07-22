@@ -1,16 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useData } from '../contexts/DataContext'
 import Sidebar from './Sidebar'
 import Header from './Header'
+import LoadingSpinner from './LoadingSpinner'
 
 function Layout() {
-  const { user, loading } = useAuth()
+  const { user, loading: authLoading } = useAuth()
+  const { loading: dataLoading } = useData()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
-  if (loading) {
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <LoadingSpinner size="xl" text="Loading your account..." />
       </div>
     )
   }
@@ -21,11 +25,34 @@ function Layout() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar />
-      <div className="ml-64">
-        <Header />
-        <main className="p-6">
-          <Outlet />
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={() => setSidebarOpen(false)} 
+      />
+
+      {/* Main content */}
+      <div className="lg:ml-64">
+        <Header onMenuClick={() => setSidebarOpen(true)} />
+        
+        <main className="p-4 sm:p-6">
+          {dataLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <LoadingSpinner size="lg" text="Loading your financial data..." />
+            </div>
+          ) : (
+            <div className="max-w-7xl mx-auto">
+              <Outlet />
+            </div>
+          )}
         </main>
       </div>
     </div>
